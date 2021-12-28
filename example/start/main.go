@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/eric2788/biligo-live"
 	"github.com/gorilla/websocket"
-	"github.com/iyear/biligo-live"
 	"log"
 	"time"
 )
