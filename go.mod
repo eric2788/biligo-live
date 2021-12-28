@@ -1,4 +1,4 @@
-module github.com/iyear/biligo-live
+module github.com/eric2788/biligo-live
 
 go 1.16
 

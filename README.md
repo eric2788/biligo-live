@@ -12,6 +12,17 @@
 ![](https://img.shields.io/github/last-commit/iyear/biligo-live?style=flat-square)
 [![Go Reference](https://pkg.go.dev/badge/github.com/iyear/biligo-live.svg)](https://pkg.go.dev/github.com/iyear/biligo-live)
 
+## 本版本是hotfix版本，主分支為 hotfix/ericlam
+
+**由於作者尚未推出修復版本，因此暫時創建這個版本**
+
+修復問題:
+- 網絡不穩定時會出現 panic error 導致程序直接中止
+
+```shell
+go get -u github.com/eric278/biligo-live
+```
+
 ## 简介
 
 **v0版本不保证对外函数、结构的不变性，请勿大规模用于生产环境**
