@@ -5,10 +5,11 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/websocket"
 	"log"
 	"os"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 type Live struct {
@@ -60,7 +61,7 @@ func (l *Live) Enter(ctx context.Context, room int64, key string, uid int64) err
 	if err != nil {
 		return err
 	}
-	if err = l.ws.WriteMessage(websocket.BinaryMessage, encode(0, wsOpEnterRoom, body)); err != nil {
+	if err = l.ws.WriteMessage(websocket.BinaryMessage, encode(wsVerPlain, wsOpEnterRoom, body)); err != nil {
 		return err
 	}
 
@@ -108,7 +109,7 @@ func (l *Live) report() {
 }
 func (l *Live) heartbeat(ctx context.Context, t time.Duration) {
 	hb := func(live *Live) {
-		err := live.ws.WriteMessage(websocket.BinaryMessage, encode(0, wsOpHeartbeat, nil))
+		err := live.ws.WriteMessage(websocket.BinaryMessage, encode(wsVerPlain, wsOpHeartbeat, nil))
 		if err != nil {
 			live.push(ctx, nil, fmt.Errorf("failed to send hearbeat: %s", err))
 		}
@@ -372,6 +373,8 @@ func (l *Live) switchCmd(cmd string, body []byte) Msg {
 		m = &MsgPkAttention{base: b}
 	case cmdPkShare:
 		m = &MsgPkShare{base: b}
+	case cmdWatChedChange:
+		m = &MsgWatChed{base: b}
 	default:
 		m = &MsgGeneral{base: b}
 	}
