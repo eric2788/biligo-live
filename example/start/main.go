@@ -3,16 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/eric2788/biligo-live"
-	"github.com/gorilla/websocket"
 	"log"
 	"time"
+
+	live "github.com/eric2788/biligo-live"
+	"github.com/gorilla/websocket"
 )
 
 // 同 README.md 的快速开始
 
 func main() {
-	const room int64 = 573893
+	const room int64 = 23199554
 
 	// 获取一个Live实例
 	// debug: debug模式，输出一些额外的信息
@@ -85,13 +86,13 @@ func rev(ctx context.Context, l *live.Live) {
 func handle(msg live.Msg) {
 	// 使用 msg.(type) 进行事件跳转和处理，常见事件基本都完成了解析(Parse)功能，不常见的功能有一些实在太难抓取
 	// 更多注释和说明等待添加
-	switch msg.(type) {
+	switch msg := msg.(type) {
 	// 心跳回应直播间人气值
 	case *live.MsgHeartbeatReply:
-		log.Printf("hot: %d\n", msg.(*live.MsgHeartbeatReply).GetHot())
+		log.Printf("hot: %d\n", msg.GetHot())
 	// 弹幕消息
 	case *live.MsgDanmaku:
-		dm, err := msg.(*live.MsgDanmaku).Parse()
+		dm, err := msg.Parse()
 		if err != nil {
 			log.Println(err)
 			return
@@ -99,7 +100,7 @@ func handle(msg live.Msg) {
 		fmt.Printf("弹幕: %s (%d:%s) 【%s】| %d\n", dm.Content, dm.MID, dm.Uname, dm.MedalName, dm.Time)
 	// 礼物消息
 	case *live.MsgSendGift:
-		g, err := msg.(*live.MsgSendGift).Parse()
+		g, err := msg.Parse()
 		if err != nil {
 			log.Println(err)
 			return
@@ -107,7 +108,7 @@ func handle(msg live.Msg) {
 		fmt.Printf("%s: %s %d个%s\n", g.Action, g.Uname, g.Num, g.GiftName)
 	// 直播间粉丝数变化消息
 	case *live.MsgFansUpdate:
-		f, err := msg.(*live.MsgFansUpdate).Parse()
+		f, err := msg.Parse()
 		if err != nil {
 			log.Println(err)
 			return

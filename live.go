@@ -73,7 +73,7 @@ func (l *Live) Enter(ctx context.Context, room int64, key string, uid int64) err
 
 	hbCtx, hbCancel := context.WithCancel(ctx)
 	revCtx, revCancel := context.WithCancel(ctx)
-	ifError := make(chan error)
+	ifError := make(chan error, 1)
 	go l.revWithError(revCtx, ifError)
 
 	go func() {
@@ -107,11 +107,11 @@ func (l *Live) Enter(ctx context.Context, room int64, key string, uid int64) err
 func (l *Live) report() {
 	if r := recover(); r != nil {
 		var e error
-		switch r.(type) {
+		switch r := r.(type) {
 		case error:
-			e = r.(error)
+			e = r
 		case string:
-			e = fmt.Errorf("%s", r.(string))
+			e = fmt.Errorf("%s", r)
 		}
 
 		if l.recover != nil {
@@ -157,9 +157,8 @@ func (l *Live) revWithError(ctx context.Context, ifError chan<- error) {
 			if t, msg, err := l.ws.ReadMessage(); t == websocket.BinaryMessage && err == nil && len(msg) > 16 {
 				go l.handle(msgCtx, msg)
 			} else if err != nil {
-				go func() {
-					ifError <- err
-				}()
+				ifError <- err
+				close(ifError)
 				return
 			}
 		}
